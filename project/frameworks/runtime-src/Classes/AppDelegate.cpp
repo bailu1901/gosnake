@@ -55,7 +55,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     sc->addRegisterCallback(jsb_register_system);
     sc->addRegisterCallback(JSB_register_opengl);
     sc->addRegisterCallback(jsb_register_chipmunk);
-    sc->start();
+    sc->start(); 
     
 
     ScriptEngineProtocol *engine = ScriptingCore::getInstance();

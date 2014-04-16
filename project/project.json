@@ -12,6 +12,9 @@
 
     "jsList" : [
         "src/resource.js",
-        "src/app.js"
+        "src/gamedefine.js",
+        "src/app.js",
+        "src/mainmenu_scene.js",
+        "src/game_scene.js"
     ]
 }
