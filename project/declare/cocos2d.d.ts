@@ -519,6 +519,24 @@ declare module cc {
      * @extends cc.Class
      */
     export class Action extends Class {
+         /**
+         * @return {Boolean}
+         */
+        isDone(): boolean
+
+        /**
+         * @param {Number} dt
+         */
+        step(dt: number): void;
+
+        /**
+         * @param {Number} time
+         */
+        update(time: number): void;
+
+        reverse(): Action;
+
+        clone(): Action;
     }
 
     /**
@@ -661,7 +679,7 @@ declare module cc {
          * // example
          * var actionBy = cc.RotateBy.create(2, 360):void;
          */
-        static create(duration: number, deltaAngleX: number, deltaAngleY: number): RotateBy;
+        static create(duration: number, deltaAngleX: number, deltaAngleY?: number): RotateBy;
     }
 
     /** Moves a cc.Node object to the position x,y. x and y are absolute coordinates by modifying it's position attribute.
@@ -1081,6 +1099,14 @@ declare module cc {
     export class Node extends Class {
 
         attr(a: Object): void;
+
+        x: number;
+        y: number;
+        visible: boolean;
+        tag: number;
+        scale: number;
+        anchorX: number;
+        anchorY: number;
 
         /**
          * set the dirty node
@@ -2041,6 +2067,9 @@ declare module cc {
      * @extends cc.Sprite
      */
     export class LabelTTF extends Sprite {
+
+        setString(str: string): void;
+
         /**
          * creates a cc.LabelTTF from a fontname, alignment, dimension and font size
          * @param {String} label
@@ -2852,7 +2881,7 @@ declare module cc {
          *
          * menu.alignItemsInColumns(3,3)//this creates 2 columns, each have 3 items
          */
-        alignItemsInColumns(/*Multiple Arguments*/): void;
+        alignItemsInColumns(...args: number[]): void;
 
         /**
          * align menu items in rows
@@ -2862,7 +2891,7 @@ declare module cc {
          *
          * menu.alignItemsInRows(4,4,4,4)//this creates 4 rows each have 4 items
          */
-        alignItemsInRows(/*Multiple arguments*/): void;
+        alignItemsInRows(...args: number[]): void;
 
 
 
@@ -3004,23 +3033,23 @@ declare module cc {
         /**
          * @param {Number} s
          */
-        setFontSize(s: number): void;
+        static setFontSize(s: number): void;
 
         /**
          *
          * @return {Number}
          */
-        fontSize(): number;
+        static fontSize(): number;
 
         /**
          * @param {String} name
          */
-        setFontName(name: string): void;
+        static setFontName(name: string): void;
 
         /**
          * @return {String}
          */
-        fontName(): string;
+        static fontName(): string;
 
         /**
          * create a menu item from string
@@ -3204,6 +3233,8 @@ declare module cc {
         isOpacityModifyRGB(): boolean;
 
         onEnter(): void;
+
+        setCallback(func: any): void;
 
         /**
          * create a simple container class that "toggles" it's inner items<br/>
@@ -3940,7 +3971,7 @@ declare module cc {
          * //Create an animation with sprite frames and delay
          * var animation3 = cc.Animation.create(animFrames, 0.2):void;
          */
-        static create(frames: AnimationFrame[], delay: number, loops: number): Animation;
+        static create(frames: AnimationFrame[], delay?: number, loops?: number): Animation;
 
         /**
          * Creates an animation with an array of cc.AnimationFrame, the delay per units in seconds and and how many times it should be executed.
@@ -3952,6 +3983,44 @@ declare module cc {
         static createWithAnimationFrames(arrayOfAnimationFrameNames: AnimationFrame[], delayPerUnit: number, loops: number): Animation;
     }
     //#endregion cocos2d/sprite_nodes/CCAnimation.js
+
+    export class AnimationCache {
+
+        /**
+         * Adds a cc.Animation with a name.
+         * @param {cc.Animation} animation
+         * @param {String} name
+         */
+        addAnimation(animation: Animation, name: string): void;
+
+        /**
+         *  Deletes a cc.Animation from the cache.
+         * @param  {String} name
+         */
+        removeAnimation(name): void;
+        /**
+         * <p>
+         *     Returns a cc.Animation that was previously added.<br/>
+         *      If the name is not found it will return nil.<br/>
+         *      You should retain the returned copy if you are going to use it.</br>
+         * </p>
+         * @param {String} name
+         * @return {cc.Animation}
+         */
+        getAnimation(name: string): Animation;
+
+
+        /**
+         * <p>
+         *    Adds an animation from a plist file.<br/>
+         *    Make sure that the frames were previously loaded in the cc.SpriteFrameCache.
+         * </p>
+         * @param {String} plist
+         */
+        addAnimations(plist: string): void;
+    }
+
+    export var animationCache: AnimationCache;
 
     //#region cocos2d/sprite_nodes/CCSprite.js
     /**
@@ -3984,6 +4053,23 @@ declare module cc {
      * aSprite.initWithFile("HelloHTML5World.png",cc.rect(0,0,480,320)):void;
      */
     export class Sprite extends Node {
+
+        constructor(...args: any[]);
+        ctor(...args: any[]);
+
+        /**
+         * conforms to cc.TextureProtocol protocol
+         * @function
+         * @param {Number|cc.BlendFunc} src
+         * @param {Number} dst
+         */
+        setBlendFunc(src: number, dst: number): void;
+        setBlendFunc(blendFunc: BlendFunc): void;
+
+        width: number;
+        height: number;
+        color: Color3B;
+
         /**
          * Create a sprite with filename and rect
          * @constructs
@@ -3997,9 +4083,44 @@ declare module cc {
          * //create a sprite with filename and rect
          * var sprite2 = cc.Sprite.create("HelloHTML5World.png",cc.rect(0,0,480,320)):void;
          */
-        static create(fileName?: string, rect?: Rect): Sprite;
+        static create(...args: any[]): Sprite;
     }
     //#endregion cocos2d/sprite_nodes/CCSprite.js
+
+    export class BlendFunc {
+        src: number;
+        dst: number;
+    }
+
+    /**
+     * @constant
+     * @type Number
+     */
+    export var ONE: number;
+
+    /**
+     * @constant
+     * @type Number
+     */
+    export var ZERO: number;
+
+    /**
+     * @constant
+     * @type Number
+     */
+    export var SRC_ALPHA: number;
+
+    /**
+     * @constant
+     * @type Number
+     */
+    export var ONE_MINUS_SRC_ALPHA: number;
+
+    /**
+     * @constant
+     * @type Number
+     */
+    export var ONE_MINUS_DST_COLOR: number;
 
     //#region cocos2d/touch_dispatcher/CCTouchDelegateProtocol.js
     class Touch extends Class {
@@ -4630,8 +4751,778 @@ declare module cc {
     class Texture2D {
     }
 
+    export function assert(exp: any, msg: string): void;
+
+    /**
+     * Instant actions are immediate actions. They don't have a duration like
+     * the CCIntervalAction actions.
+     * @class
+     * @extends cc.FiniteTimeAction
+     */
+    class ActionInstant extends FiniteTimeAction {
+
+    }
+
+    export class CallFunc extends ActionInstant {
+
+        static create(selector: any, selectorTarget?: any, data?: any): CallFunc;
+    }
+
+    export class TextureCache {
+        handleLoadedTexture(url: string): void;
+
+        /**
+         * <p>
+         *     Returns a Texture2D object given an PVR filename                                                              <br/>
+         *     If the file image was not previously loaded, it will create a new CCTexture2D                                 <br/>
+         *     object and it will return it. Otherwise it will return a reference of a previously loaded image              <br/>
+         *     note: AddPVRTCImage does not support on HTML5
+         * </p>
+         * @param {String} filename
+         * @return {cc.Texture2D}
+         */
+        addPVRTCImage(filename: string): Texture2D;
+
+
+        /**
+         * <p>
+         *     Returns a Texture2D object given an ETC filename                                                               <br/>
+         *     If the file image was not previously loaded, it will create a new CCTexture2D                                  <br/>
+         *     object and it will return it. Otherwise it will return a reference of a previously loaded image                <br/>
+         *    note:addETCImage does not support on HTML5
+         * </p>
+         * @param {String} filename
+         * @return {cc.Texture2D}
+         */
+        addETCImage(filename: string): Texture2D;
+
+        /**
+         * Description
+         * @return {String}
+         */
+        description(): string;
+
+        /**
+         * Returns an already created texture. Returns null if the texture doesn't exist.
+         * @param {String} textureKeyName
+         * @return {cc.Texture2D|Null}
+         * @example
+         * //example
+         * var key = cc.textureCache.textureForKey("hello.png");
+         */
+        textureForKey(textureKeyName: string): Texture2D;
+
+        /**
+         * @param {Image} texture
+         * @return {String|Null}
+         * @example
+         * //example
+         * var key = cc.textureCache.getKeyByTexture(texture);
+         */
+        getKeyByTexture(texture: Image): string;
+
+
+        /**
+         * <p>Returns a Texture2D object given an PVR filename<br />
+         * If the file image was not previously loaded, it will create a new Texture2D<br />
+         *  object and it will return it. Otherwise it will return a reference of a previously loaded image </p>
+         * @param {String} path
+         * @return {cc.Texture2D}
+         */
+        addPVRImage(path: string): Texture2D;
+
+        /**
+         * <p>Purges the dictionary of loaded textures. <br />
+         * Call this method if you receive the "Memory Warning"  <br />
+         * In the short term: it will free some resources preventing your app from being killed  <br />
+         * In the medium term: it will allocate more resources <br />
+         * In the long term: it will be the same</p>
+         * @example
+         * //example
+         * cc.textureCache.removeAllTextures();
+         */
+        removeAllTextures(): void;
+
+        /**
+         * Deletes a texture from the cache given a texture
+         * @param {Image} texture
+         * @example
+         * //example
+         * cc.textureCache.removeTexture(texture);
+         */
+        removeTexture(texture: Image): void;
+
+        /**
+         * Deletes a texture from the cache given a its key name
+         * @param {String} textureKeyName
+         * @example
+         * //example
+         * cc.textureCache.removeTexture("hello.png");
+         */
+        removeTextureForKey(textureKeyName: string): void;
+
+        /**
+         * <p>Returns a Texture2D object given an file image <br />
+         * If the file image was not previously loaded, it will create a new Texture2D <br />
+         *  object and it will return it. It will use the filename as a key.<br />
+         * Otherwise it will return a reference of a previously loaded image. <br />
+         * Supported image extensions: .png, .jpg, .gif</p>
+         * @param {String} url
+         * @return {cc.Texture2D}
+         * @example
+         * //example
+         * cc.textureCache.addImage("hello.png");
+         */
+        addImage(url: string, target?: any, cb?: any): Texture2D;
+
+        /**
+         *  Cache the image data
+         * @param {String} path
+         * @param {Image|HTMLImageElement|HTMLCanvasElement} texture
+         */
+        cacheImage(path: string, texture: Image): void;
+
+        /**
+         * <p>Output to cc.log the current contents of this TextureCache <br />
+         * This will attempt to calculate the size of each texture, and the total texture memory in use. </p>
+         */
+        dumpCachedTextureInfo(): void;
+    }
+
+    export var textureCache: TextureCache;
+
+    class Image { }
+
+
+    export class KEY {
+        static backspace: number;
+        static tab: number;
+        static enter: number;
+        static shift: number; //should use shiftkey instead
+        static ctrl: number; //should use ctrlkey
+        static alt: number; //should use altkey
+        static pause: number;
+        static capslock: number;
+        static escape: number;
+        static pageup: number;
+        static pagedown: number;
+        static end: number;
+        static home: number;
+        static left: number;
+        static up: number;
+        static right: number;
+        static down: number;
+        static insert: number;
+        static Delete: number;
+        static 0: number;
+        static 1: number;
+        static 2: number;
+        static 3: number;
+        static 4: number;
+        static 5: number;
+        static 6: number;
+        static 7: number;
+        static 8: number;
+        static 9: number;
+        static a: number;
+        static b: number;
+        static c: number;
+        static d: number;
+        static e: number;
+        static f: number;
+        static g: number;
+        static h: number;
+        static i: number;
+        static j: number;
+        static k: number;
+        static l: number;
+        static m: number;
+        static n: number;
+        static o: number;
+        static p: number;
+        static q: number;
+        static r: number;
+        static s: number;
+        static t: number;
+        static u: number;
+        static v: number;
+        static w: number;
+        static x: number;
+        static y: number;
+        static z: number;
+        static num0: number;
+        static num1: number;
+        static num2: number;
+        static num3: number;
+        static num4: number;
+        static num5: number;
+        static num6: number;
+        static num7: number;
+        static num8: number;
+        static num9: number;
+        static '*': number;
+        static '+': number;
+        static '-': number;
+        static 'numdel': number;
+        static '/': number;
+        static f1: number; //f1-f12 dont work on ie
+        static f2: number;
+        static f3: number;
+        static f4: number;
+        static f5: number;
+        static f6: number;
+        static f7: number;
+        static f8: number;
+        static f9: number;
+        static f10: number;
+        static f11: number;
+        static f12: number;
+        static numlock: number;
+        static scrolllock: number;
+        static semicolon: number;
+        static ',': number;
+        static equal: number;
+        static '=': number;
+        static ':number': number;
+        static comma: number;
+        static dash: number;
+        static '.': number;
+        static period: number;
+        static forwardslash: number;
+        static grave: number;
+        static '[': number;
+        static openbracket: number;
+        static ']': number;
+        static closebracket: number;
+        static backslash: number;
+        static quote: number;
+        static space: number;
+    }
+
+    export class ActionEase extends ActionInterval {
+        static create(action: ActionInterval): ActionEase;
+    }
+
+    export class EaseSineOut extends ActionEase {
+        static create(action: ActionInterval): EaseSineOut;
+    }
+
+    export class EaseSineIn extends ActionEase {
+        static create(action: ActionInterval): EaseSineIn;
+    }
+
+    export class EaseExponentialOut extends ActionEase {
+        static create(action: ActionInterval): EaseExponentialOut;
+    }
+
+    export class SpriteBatchNode extends Node {
+        // property
+        /**
+         * Return TextureAtlas of cc.SpriteBatchNode
+         * @return {cc.TextureAtlas}
+         */
+        getTextureAtlas(): TextureAtlas;
+
+        /**
+         * TextureAtlas of cc.SpriteBatchNode setter
+         * @param {cc.TextureAtlas} textureAtlas
+         */
+        setTextureAtlas(textureAtlas: TextureAtlas): void;
+
+        static create(texture: Texture2D): SpriteBatchNode;
+    }
+
+    export class TextureAtlas { }
+
+    export function color(r: number, g: number, b: number, a?: number): Color4B;
+
+
+    export class EventManager {
+        //Priority dirty flag
+        static DIRTY_NONE: number;
+        static DIRTY_FIXED_PRIORITY: number;
+        static DIRTY_SCENE_GRAPH_PRIORITY: number;
+        static DIRTY_ALL: number;
+
+        /**
+         * Pauses all listeners which are associated the specified target.
+         * @param {cc.Node} node
+         * @param {Boolean} [recursive=false]
+         */
+        pauseTarget(node: Node, recursive: boolean): void;
+
+        /**
+         * Resumes all listeners which are associated the specified target.
+         * @param {cc.Node} node
+         * @param {Boolean} [recursive=false]
+         */
+        resumeTarget(node: Node, recursive: boolean): void;
+        /**
+         * <p>
+         * Adds a event listener for a specified event.                                                                                                            <br/>
+         * if the parameter "nodeOrPriority" is a node, it means to add a event listener for a specified event with the priority of scene graph.                   <br/>
+         * if the parameter "nodeOrPriority" is a Number, it means to add a event listener for a specified event with the fixed priority.                          <br/>
+         * </p>
+         * @param {cc.EventListener|Object} listener The listener of a specified event or a object of some event parameters.
+         * @param {cc.Node|Number} nodeOrPriority The priority of the listener is based on the draw order of this node or fixedPriority The fixed priority of the listener.
+         * @note  The priority of scene graph will be fixed value 0. So the order of listener item in the vector will be ' <0, scene graph (0 priority), >0'.
+         *         A lower priority will be called before the ones that have a higher value. 0 priority is forbidden for fixed priority since it's used for scene graph based priority.
+         *         The listener must be a cc.EventListener object when adding a fixed priority listener, because we can't remove a fixed priority listener without the listener handler,
+         *         except calls removeAllListeners().
+         */
+        addListener(listener, nodeOrPriority): void;
+
+        /**
+         * Adds a Custom event listener. It will use a fixed priority of 1.
+         * @param {string} eventName
+         * @param {function} callback
+         * @return {cc.EventListener} the generated event. Needed in order to remove the event from the dispatcher
+         */
+        addCustomListener(eventName, callback): EventListener;
+
+        /**
+         * Remove a listener
+         * @param {cc.EventListener} listener an event listener or a registered node target
+         */
+        removeListener(listener: EventListener): void;
+
+        /**
+         * Removes all listeners with the same event listener type or removes all listeners of a node
+         * @param {Number|cc.Node} listenerType or a node
+         * @param {Boolean} [recursive=false]
+         */
+
+        removeListeners(listenerType: number, recursive?: boolean): void;
+        removeListeners(listenerType: Node, recursive?: boolean): void;
+
+        /**
+         * Removes all custom listeners with the same event name
+         * @param {string} customEventName
+         */
+        removeCustomListeners(customEventName): void;
+
+        /**
+         * Removes all listeners
+         */
+        removeAllListeners(): void;
+
+        /**
+         * Sets listener's priority with fixed value.
+         * @param {cc.EventListener} listener
+         * @param {Number} fixedPriority
+         */
+        setPriority(listener, fixedPriority): void;
+
+        /**
+         * Whether to enable dispatching events
+         * @param {boolean} enabled
+         */
+        setEnabled(enabled: boolean): void;
+
+        /**
+         * Checks whether dispatching events is enabled
+         * @returns {boolean}
+         */
+        isEnabled(): boolean;
+
+        /**
+         * Dispatches the event, also removes all EventListeners marked for deletion from the event dispatcher list.
+         * @param {cc.Event} event
+         */
+        dispatchEvent(event): void;
+
+        /**
+         * Dispatches a Custom Event with a event name an optional user data
+         * @param {string} eventName
+         * @param {*} optionalUserData
+         */
+        dispatchCustomEvent(eventName, optionalUserData): void;
+    }
+
+    export var eventManager: EventManager;
+
+    export class EventListener extends Class {
+
+        ctor(type, listenerID, callback): void;
+
+        /**
+         * Checks whether the listener is available.
+         * @returns {boolean}
+         */
+        checkAvailable(): boolean;
+
+        /**
+         * Clones the listener, its subclasses have to override this method.
+         * @returns {cc.EventListener}
+         */
+        clone(): EventListener;
+
+        /**
+         * Currently JavaScript Bindings (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
+         * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB.
+         * This is a hack, and should be removed once JSB fixes the retain/release bug
+         */
+        retain(): void;
+        release(): void;
+
+
+        static UNKNOWN: number;
+        static TOUCH_ONE_BY_ONE: number;
+        static TOUCH_ALL_AT_ONCE: number;
+        static KEYBOARD: number;
+        static MOUSE: number;
+        static ACCELERATION: number;
+        static CUSTOM: number;
+
+    }
+
+    export var POINT_EPSILON: number;
+
+    /**
+     * Returns opposite of point.
+     * @param {cc.Point} point
+     * @return {cc.Point}
+     */
+    export function pNeg(point: Point): Point;
+
+    /**
+     * Calculates sum of two points.
+     * @param {cc.Point} v1
+     * @param {cc.Point} v2
+     * @return {cc.Point}
+     */
+    export function pAdd(v1: Point, v2: Point): Point;
+
+    /**
+     * Calculates difference of two points.
+     * @param {cc.Point} v1
+     * @param {cc.Point} v2
+     * @return {cc.Point}
+     */
+    export function pSub(v1: Point, v2: Point): Point;
+
+    /**
+     * Returns point multiplied by given factor.
+     * @param {cc.Point} point
+     * @param {Number} floatVar
+     * @return {cc.Point}
+     */
+    export function pMult(point: Point, floatVar: number): Point;
+
+    /**
+     * Calculates midpoint between two points.
+     * @param {cc.Point} v1
+     * @param {cc.Point} v2
+     * @return {cc.pMult}
+     */
+    export function pMidpoint(v1: Point, v2: Point): Point;
+
+    /**
+     * Calculates dot product of two points.
+     * @param {cc.Point} v1
+     * @param {cc.Point} v2
+     * @return {Number}
+     */
+    export function pDot(v1: Point, v2: Point): number;
+
+    /**
+     * Calculates cross product of two points.
+     * @param {cc.Point} v1
+     * @param {cc.Point} v2
+     * @return {Number}
+     */
+    export function pCross(v1: Point, v2: Point): number;
+
+    /**
+     * Calculates perpendicular of v, rotated 90 degrees counter-clockwise -- cross(v, perp(v)) >= 0
+     * @param {cc.Point} point
+     * @return {cc.Point}
+     */
+    export function pPerp(point: Point): Point;
+
+    /**
+     * Calculates perpendicular of v, rotated 90 degrees clockwise -- cross(v, rperp(v)) <= 0
+     * @param {cc.Point} point
+     * @return {cc.Point}
+     */
+    export function pRPerp(point: Point): Point;
+
+    /**
+     * Calculates the projection of v1 over v2.
+     * @param {cc.Point} v1
+     * @param {cc.Point} v2
+     * @return {cc.pMult}
+     */
+    export function pProject(v1: Point, v2: Point): Point;
+
+    /**
+     * Rotates two points.
+     * @param  {cc.Point} v1
+     * @param  {cc.Point} v2
+     * @return {cc.Point}
+     */
+    export function pRotate(v1: Point, v2: Point): Point;
+
+    /**
+     * Unrotates two points.
+     * @param  {cc.Point} v1
+     * @param  {cc.Point} v2
+     * @return {cc.Point}
+     */
+    export function pUnrotate(v1: Point, v2: Point): Point;
+
+    /**
+     * Calculates the square length of a cc.Point (not calling sqrt() )
+     * @param  {cc.Point} v
+     *@return {Number}
+     */
+    export function pLengthSQ(v: Point): number;
+
+    /**
+     * Calculates the square distance between two points (not calling sqrt() )
+     * @param {cc.Point} point1
+     * @param {cc.Point} point2
+     * @return {Number}
+     */
+    export function pDistanceSQ(point1: Point, point2: Point): number;
+
+    /**
+     * Calculates distance between point an origin
+     * @param  {cc.Point} v
+     * @return {Number}
+     */
+    export function pLength(v: Point): number;
+
+    /**
+     * Calculates the distance between two points
+     * @param {cc.Point} v1
+     * @param {cc.Point} v2
+     * @return {cc.pLength}
+     */
+    export function pDistance(v1: Point, v2: Point): number;
+
+    /**
+     * Returns point multiplied to a length of 1.
+     * @param {cc.Point} v
+     * @return {cc.Point}
+     */
+    export function pNormalize(v: Point): Point;
+
+    /**
+     * Converts radians to a normalized vector.
+     * @param {Number} a
+     * @return {cc.Point}
+     */
+    export function pForAngle(a: number): Point;
+
+    /**
+     * Converts a vector to radians.
+     * @param {cc.Point} v
+     * @return {Number}
+     */
+    export function pToAngle(v: Point): number;
+
+    /**
+     * Clamp a value between from and to.
+     * @param {Number} value
+     * @param {Number} min_inclusive
+     * @param {Number} max_inclusive
+     * @return {Number}
+     */
+    export function clampf(value: number, min_inclusive: number, max_inclusive: number): number;
+
+    /**
+     * Clamp a point between from and to.
+     * @param {Point} p
+     * @param {Number} min_inclusive
+     * @param {Number} max_inclusive
+     * @return {cc.Point}
+     */
+    export function pClamp(p: Point, min_inclusive: Point, max_inclusive: Point): Point;
+
+    /**
+     * Quickly convert cc.Size to a cc.Point
+     * @param {cc.Size} s
+     * @return {cc.Point}
+     */
+    export function pFromSize(s: Size): Point;
+
+    /**
+     * Run a math operation function on each point component <br />
+     * Math.abs, Math.fllor, Math.ceil, Math.round.
+     * @param {cc.Point} p
+     * @param {Function} opFunc
+     * @return {cc.Point}
+     * @example
+     * //For example: let's try to take the floor of x,y
+     * var p = cc.pCompOp(cc.p(10,10),Math.abs);
+     */
+    export function pCompOp(p: Point, opFunc): Point;
+
+    /**
+     * Linear Interpolation between two points a and b
+     * alpha == 0 ? a
+     * alpha == 1 ? b
+     * otherwise a value between a..b
+     * @param {cc.Point} a
+     * @param {cc.Point} b
+     * @param {Number} alpha
+     * @return {cc.pAdd}
+     */
+    export function pLerp(a: Point, b: Point, alpha: number);
+
+    /**
+     * @param {cc.Point} a
+     * @param {cc.Point} b
+     * @param {Number} variance
+     * @return {Boolean} if points have fuzzy equality which means equal with some degree of variance.
+     */
+    export function pFuzzyEqual(a: Point, b: Point, variance: number): boolean;
+
+    /**
+     * Multiplies a nd b components, a.x*b.x, a.y*b.y
+     * @param {cc.Point} a
+     * @param {cc.Point} b
+     * @return {cc.Point}
+     */
+    export function pCompMult(a: Point, b: Point): Point;
+    /**
+     * @param {cc.Point} a
+     * @param {cc.Point} b
+     * @return {Number} the signed angle in radians between two vector directions
+     */
+    export function pAngleSigned(a: Point, b: Point): number;
+
+    /**
+     * @param {cc.Point} a
+     * @param {cc.Point} b
+     * @return {Number} the angle in radians between two vector directions
+     */
+    export function pAngle(a: Point, b: Point): number;
+
+    /**
+     * Rotates a point counter clockwise by the angle around a pivot
+     * @param {cc.Point} v v is the point to rotate
+     * @param {cc.Point} pivot pivot is the pivot, naturally
+     * @param {Number} angle angle is the angle of rotation cw in radians
+     * @return {cc.Point} the rotated point
+     */
+    export function pRotateByAngle(v: Point, pivot: Point, angle: number): Point;
+
+    /**
+     * A general line-line intersection test
+     * @param {cc.Point} A A is the startpoint for the first line P1 = (p1 - p2).
+     * @param {cc.Point} B B is the endpoint for the first line P1 = (p1 - p2).
+     * @param {cc.Point} C C is the startpoint for the second line P2 = (p3 - p4).
+     * @param {cc.Point} D D is the endpoint for the second line P2 = (p3 - p4).
+     * @param {cc.Point} retP retP.x is the range for a hitpoint in P1 (pa = p1 + s*(p2 - p1)), <br />
+     * retP.y is the range for a hitpoint in P3 (pa = p2 + t*(p4 - p3)).
+     * @return {Boolean}
+     * indicating successful intersection of a line<br />
+     * note that to truly test intersection for segments we have to make<br />
+     * sure that s & t lie within [0..1] and for rays, make sure s & t > 0<br />
+     * the hit point is        p3 + t * (p4 - p3);<br />
+     * the hit point also is    p1 + s * (p2 - p1);
+     */
+    export function pLineIntersect(A: Point, B: Point, C: Point, D: Point, retP: Point): void;
+
+    /**
+     * ccpSegmentIntersect return YES if Segment A-B intersects with segment C-D.
+     * @param {cc.Point} A
+     * @param {cc.Point} B
+     * @param {cc.Point} C
+     * @param {cc.Point} D
+     * @return {Boolean}
+     */
+    export function pSegmentIntersect(A: Point, B: Point, C: Point, D: Point): boolean;
+
+    /**
+     * ccpIntersectPoint return the intersection point of line A-B, C-D
+     * @param {cc.Point} A
+     * @param {cc.Point} B
+     * @param {cc.Point} C
+     * @param {cc.Point} D
+     * @return {cc.Point}
+     */
+    export function pIntersectPoint(A: Point, B: Point, C: Point, D: Point): Point;
+
+    /**
+     * check to see if both points are equal
+     * @param {cc.Point} A A ccp a
+     * @param {cc.Point} B B ccp b to be compared
+     * @return {Boolean} the true if both ccp are same
+     */
+    export function pSameAs(A: Point, B: Point): boolean;
+
+
+
+    // High Perfomance In Place Operationrs ---------------------------------------
+
+    /**
+      * sets the position of the point to 0
+      */
+    export function pZeroIn(v): void;
+
+    /**
+      * copies the position of one point to another
+      */
+    export function pIn(v1: Point, v2: Point): void;
+    /**
+      * multiplies the point with the given factor (inplace)
+      */
+    export function pMultIn(point: Point, floatVar: number): void;
+
+    /**
+      * subtracts one point from another (inplace)
+      */
+    export function pSubIn(v1: Point, v2: Point): void;
+
+    /**
+      * adds one point to another (inplace)
+      */
+    export function pAddIn(v1: Point, v2: Point): void;
+
+    /**
+      * normalizes the point (inplace)
+      */
+    export function pNormalizeIn(v: Point): void;
+
+
+    export class LabelBMFont extends SpriteBatchNode {
+        static create(...args: any[]);
+    }
+
+    export class Show extends ActionInstant {
+        static create(): Show;
+    }
+
+    export class Hide extends ActionInstant {
+        static create(): Hide;
+    }
+
+    export class ToggleVisibility extends ActionInstant {
+        static create(): ToggleVisibility;
+    }
+
+    export class EaseBounce extends ActionEase {
+        static create(action: Action): EaseBounce;
+    }
+
+    export class EaseBounceIn extends EaseBounce {
+        static create(action: Action): EaseBounceIn;
+    }
+
+    export class EaseBounceOut extends EaseBounce {
+        static create(action: Action): EaseBounceIn;
+    }
+
+    export class EaseBounceInOut extends EaseBounce {
+        static create(action: Action): EaseBounceInOut;
+    }
+
     /** N/A in cocos2d-html5 */
     export module sys {
+        var isNative: boolean;
         var platform: string;
         var capabilities: any;
 
@@ -4645,5 +5536,3 @@ declare module cc {
     }
 
 }
-
-
